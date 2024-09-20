@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="description" content="Data Visualisation Exercise 1" />
+    <meta name="keywords" content="HTML, CSS" />
+    <meta name="author" content="Your name here" />
+
+    <title>Task 1.2 Javascript</title>
+    <!--Insert description of exercise  -->
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 20px;
+            background-color: #f4f4f4;
+        }
+
+        h1 {
+            color: #333;
+            text-align: center;
+            font-size: 2.5em;
+        }
+
+        h2 {
+            color: #555;
+            text-align: center;
+            font-size: 1.5em;
+            margin-bottom: 20px;
+        }
+
+        p {
+            max-width: 800px;
+            margin: 0 auto;
+
+            padding: 20px;
+            border-radius: 8px;
+
+        }
+
+        ul {
+            margin-top: 10px;
+            padding-left: 350px;
+        }
+
+
+
+        figure {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        img {
+            width: 300px;
+            height: auto;
+            margin: 10px;
+            border-radius: 10px;
+            border: 2px solid #ddd;
+        }
+
+        button {
+            padding: 10px 20px;
+            margin: 5px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+        }
+
+        .button1 {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .button2 {
+            background-color: #2196F3;
+            color: white;
+        }
+
+        .button3 {
+            background-color: #f44336;
+            color: white;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 50px;
+            font-size: 0.9em;
+            color: #777;
+        }
+
+        .image-container {
+            text-align: center;
+            margin: 5px 0;
+        }
+
+        .image-container img {
+            display: inline-block;
+        }
+
+        .button-container {
+            margin-left: 250px;
+        }
+    </style>
+
+    <script>
+        // Function to change image, caption, and alt text
+        function showImage(imageSource, captionText, altText) {
+            // Get the image and caption elements
+            const imageElement = document.getElementById('visualizationImage');
+            const captionElement = document.getElementById('imageCaption');
+
+            // Change the image source, alt text, and caption
+            imageElement.src = imageSource;
+            imageElement.alt = altText;
+            captionElement.innerHTML = captionText;
+        }
+    </script>
+
+</head>
+
+<body>
+
+    <h1>Title of Article about Interesting Visualisation</h1>
+    <h2>Author of Interesting Article</h2>
+    <p>
+        Pets and the Pandemic
+
+        A report from Animal Medicines Australia (AMA) has found that many Australians took the opportunity to introduce
+        a pet
+        into their household during the pandemic. <b>Their survey indicated that there was a significant increase in the
+            percent of
+            households taking in a new dog, fish or bird.</b> Their research also indicated that pets had a number of
+        positive
+        influences on their lives such as:
+
+    <ul>
+        <li>companionship</li>
+        <li>better mental health</li>
+        <li>joy and happiness</li>
+    </ul>
+    </p>
+
+    <p>With the increase in pet ownership the AMA are encouraging <i>policy makers</i> to consider the needs of
+        companion
+        animals and their owners when considering rental, strata and body corporate regulations are well as accepting
+        animals in
+        <i>public places and transport.</i>
+    </p>
+
+    <!-- Buttons to switch between images -->
+    <div class="button-container">
+        <button type="button" class="button button1"
+            onclick="showImage('Screenshot 2024-09-09 154209.png', 'Fig 1. Percent of pets owned by Australians in 2019', 'Fig 1. Percent of pets owned by Australians in 2019')">2019</button>
+        <button type="button" class="button button2"
+            onclick="showImage('Screenshot 2024-09-09 154116.png', 'Fig 2. Percent of pets owned by Australians in 2021', 'Fig 2. Percent of pets owned by Australians in 2021')">2021</button>
+        <button type="button" class="button button3"
+            onclick="showImage('Screenshot 2024-09-09 154707.png', 'Fig 3. Percent of pets owned by Australians in 2019 and 2021', 'Fig 3. Percent of pets owned by Australians in 2019 and 2021')">Both</button>
+    </div>
+    
+
+
+    <figure id="imageContainer">
+        <img id="visualizationImage" src="/Screenshot 2024-09-09 154209.png" alt="Fig 1. Percent of pets owned by Australians in 2019" style="width:70%">
+        <figcaption id="imageCaption">Fig 1. Percent of pets owned by Australians in 2019</figcaption>
+    </figure>
+
+    
+
+    <div class="image-container">
+        <img src="cat.jpg" alt="cat in Australia">
+        <img src="dog.png" alt="dog in Australia">
+        <img src="fish.jpg" alt="fish in Australia">
+    </div>
+
+
+    <footer>COS30045 Data Visualisation</footer>
+
+</body>
+
+</html>

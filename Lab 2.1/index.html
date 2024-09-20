@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="description" content="Data Visualisation Exercise 1" />
+    <meta name="keywords" content="HTML, CSS" />
+    <meta name="author" content="Your name here" />
+
+    <title>Task 2.1 D3 Drawing with Data - Bindings</title>
+    <!--Insert description of exercise  -->
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+
+
+</head>
+
+<body>
+
+    <h1>The D3 Journey starts here...</h1>
+    <!-- <script>
+        d3.select("body")
+            .append("p")
+            .text("New paragraph!");
+    </script> -->
+
+    <!-- <h1>Creating and Formatting Paragraphs Elements with D3</h1>
+    <script>
+        // example from Murray
+        var dataset = [20, 5, 26, 23, 9];
+
+        d3.select("body").selectAll("p")
+            .data(dataset)
+            .enter()
+            .append("p")
+            .text(function(d) {
+                return d;
+            });
+    </script> -->
+
+    <h1>Creating and Formatting Paragraphs Elements with D3</h1>
+    <script>
+        // example from Murray
+        var dataset = [20, 5, 26, 23, 9];
+
+        d3.select("body").selectAll("p")
+            .data(dataset)
+            .enter()
+            .append("p")
+            .text(function (d) {
+                if (d > 10) {
+                    return "Warning: Joe watched " + d + " cat videos today.";
+                } else
+                return "Joe watched " + d + " cat videos today.";
+            })
+            .style("color", function (d) {
+                return d > 10 ? "red" : "black";
+            });
+    </script>
+
+
+    <br>
+    <footer style="color:grey">COS30045 Data Visualisation<br>Joe Bloggs</footer>
+
+</body>
+
+
+
+</html>
