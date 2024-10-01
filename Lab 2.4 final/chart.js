@@ -12,8 +12,8 @@ function init() {
         var padding = 1;
 
         var colorScale = d3.scaleLinear()
-            .domain([d3.max(wombatSightings, function (d) { return d.wombats; }), d3.min(wombatSightings, function (d) { return d.wombats; })])  // Highest to lowest
-            .range(["yellow", "orange"]); // Map values to a color from light grey to black
+            .domain([d3.max(wombatSightings, function (d) { return d.wombats; }), d3.min(wombatSightings, function (d) { return d.wombats; })])  
+            .range(["yellow", "orange"]); // Map values to a color from YELLOW to orange
 
 
 
