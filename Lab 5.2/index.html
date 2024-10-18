@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="description" content="Data Visualisation Exercise 1" />
+    <meta name="keywords" content="HTML, CSS" />
+    <meta name="author" content="Your name here" />
+
+    <title>Task 5.2 D3 Transitions</title>
+    <!--Insert description of exercise  -->
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+
+    <style>
+        button {
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 10px 5px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition-duration: 0.4s;
+        }
+
+        /* Different colors for each button */
+        #easeLinear {
+            background-color: #4CAF50;
+            /* Green */
+        }
+
+        #easeLinear:hover {
+            background-color: #45a049;
+        }
+
+        #easeBounce {
+            background-color: #2196F3;
+            /* Blue */
+        }
+
+        #easeBounce:hover {
+            background-color: #0b7dda;
+        }
+
+        #easeElastic {
+            background-color: #FF9800;
+            /* Orange */
+        }
+
+        #easeElastic:hover {
+            background-color: #e68900;
+        }
+
+        #updateData {
+            background-color: #f44336;
+            /* Red */
+        }
+
+        #updateData:hover {
+            background-color: #da190b;
+        }
+
+        svg {
+            margin-top: 20px;
+        }
+    </style>
+
+
+</head>
+
+<body>
+    <h1>Updates and Transitions</h1>
+    <button id="updateData">Update Data</button>
+    <button id="easeLinear">Ease Linear Transition</button>
+    <button id="easeBounce">Ease Bounce Transition</button>
+    <button id="easeElastic">Ease Elastic Transition</button>
+    <br>
+    <script>
+        // example from Murray
+        var dataset = [20, 5, 26, 23, 9, 23, 16, 4, 29];
+        var w = 500;
+        var h = 150;
+        var padding = 1;
+        var maxValue = 25;
+
+
+
+        var xScale = d3.scaleBand()
+            .domain(d3.range(dataset.length))
+            .rangeRound([0, w])
+            .paddingInner(0.05);
+
+        var yScale = d3.scaleLinear()
+            .domain([0, d3.max(dataset, function (d) {
+                return d;
+            })])   // The data input range
+            .range([0, 60]);    // The range available for visualization on screen
+
+        var svg1 = d3.select("body")
+            .append("svg")
+            .attr("width", w)
+            .attr("height", h);
+
+
+        svg1.selectAll("rect")
+            .data(dataset)
+            .enter()
+            .append("rect")
+            .attr("x", function (d, i) {
+                return xScale(i);
+            })
+            .attr("y", function (d) {
+                return h - yScale(d);
+            })
+            .attr("width", xScale.bandwidth())
+            .attr("height", function (d) {
+                return yScale(d);
+            })
+            .attr("fill", "teal")
+
+
+        svg1.selectAll("text")
+            .data(dataset)
+            .enter()
+            .append("text")
+            .text(function (d) {
+                return d;
+            })
+            .attr("x", function (d, i) { return xScale(i) + xScale.bandwidth() / 2; })
+            .attr("y", function (d) {
+                return h - yScale(d) + 14;
+            })
+            .attr("fill", "white")
+            .attr("font-family", "sans-serif")
+            .attr("text-anchor", "middle")
+
+        // Function to animate bars and text with a staggered transition
+        function animateBars(easeType) {
+            var numValues = dataset.length;
+
+            dataset = [];
+
+            // Generate new random data between 0 and maxValue - 1 (24)
+            for (var i = 0; i < numValues; i++) {
+                var newNumber = Math.floor(Math.random() * maxValue);
+                dataset.push(newNumber);
+            }
+
+            // Update the Y scale based on new data
+            yScale.domain([0, d3.max(dataset)]);
+
+            svg1.selectAll("rect")
+                .data(dataset)
+                .transition()
+                .delay(function (d, i) {
+                    return i * 100; // Staggered animation
+                })
+                .duration(5000)
+                .ease(easeType)
+                .attr("y", function (d) {
+                    return h - yScale(d);
+                })
+                .attr("height", function (d) {
+                    return yScale(d);
+                });
+
+            // Update the text labels to follow bars
+            svg1.selectAll("text")
+                .data(dataset)
+                .transition()
+                .delay(function (d, i) {
+                    return i * 100; // Match the delay with the bars
+                })
+                .duration(5000)
+                .ease(easeType)
+                .text(function (d) {
+                    return d;
+                })
+                .attr("y", function (d) {
+                    return h - yScale(d) + 14;
+                });
+        }
+
+        // Button click listeners for different easing functions
+        d3.select("#easeLinear").on("click", function () {
+            animateBars(d3.easeLinear);
+        });
+
+        d3.select("#easeBounce").on("click", function () {
+            animateBars(d3.easeBounce);
+        });
+
+        d3.select("#easeElastic").on("click", function () {
+            animateBars(d3.easeElastic);
+        });
+
+        // Trigger a default easing animation when new data is updated
+        d3.select("#updateData").on("click", function () {
+            var numValues = dataset.length;
+            dataset = [];
+
+            // Generate new random data between 0 and maxValue - 1 (24)
+            for (var i = 0; i < numValues; i++) {
+                var newNumber = Math.floor(Math.random() * maxValue);
+                dataset.push(newNumber);
+            }
+
+            // Update the Y scale based on new data
+            yScale.domain([0, d3.max(dataset)]);
+
+            svg1.selectAll("rect")
+                .data(dataset)
+                .attr("y", function (d) {
+                    return h - yScale(d);
+                })
+                .attr("height", function (d) {
+                    return yScale(d);
+                });
+
+            svg1.selectAll("text")
+                .data(dataset)
+                .text(function (d) {
+                    return d;
+                })
+                .attr("y", function (d) {
+                    return h - yScale(d) + 14;
+                });
+        });
+
+
+    </script>
+
+
+    <br><br>
+    <footer style="color:grey">COS30045 Data Visualisation<br>Joe Bloggs</footer>
+
+</body>
+
+
+
+</html>

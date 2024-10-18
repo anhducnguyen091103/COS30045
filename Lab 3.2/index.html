@@ -63,6 +63,7 @@
             .attr("width", w)
             .attr("height", h);
 
+
         svg.selectAll("circle")
             .data(dataset)
             .enter()
@@ -100,7 +101,8 @@
             .attr("font-family", "sans-serif")
             .attr("font-size", "11px")
 
-        svg.append("g").attr("class", "x axis").attr("transform", "translate (0, "+ (h - padding) + ")").call(xAxis).selectAll("text") // Chọn tất cả nhãn trên trục
+
+        svg.append("g").attr("class", "x axis").attr("transform", "translate (0, "+ (h - padding) + ")").call(xAxis).selectAll("text") 
                 .style("text-anchor", "center")
                 .style("font-size", "12px")
                 .style("fill", "blue"); 
@@ -114,7 +116,8 @@
         .attr("stroke", "blue");
                 
 
-        svg.append("g").attr("class", "y axis").attr("transform", "translate(" + padding + ",0)").call(yAxis).selectAll("text") // Chọn tất cả nhãn trên trục
+
+        svg.append("g").attr("class", "y axis").attr("transform", "translate(" + padding + ",0)").call(yAxis).selectAll("text") 
                 .style("text-anchor", "center")
                 .style("font-size", "12px")
                 .style("fill", "blue");
@@ -123,7 +126,7 @@
                 .select(".domain")
                 .attr("stroke", "blue");
 
-            svg.select(".y.axis")
+        svg.select(".y.axis")
                 .selectAll(".tick line")
                 .attr("stroke", "blue");
     </script>

@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="description" content="Data Visualisation Exercise 1" />
+    <meta name="keywords" content="HTML, CSS" />
+    <meta name="author" content="Your name here" />
+
+    <title>Task 5.1 D3 Updates</title>
+    <!--Insert description of exercise  -->
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+
+    <style>
+        /* Style for the update data button */
+        #updateButton {
+            background-color: #4CAF50;
+            /* Green background */
+            border: none;
+            /* Remove borders */
+            color: white;
+            /* White text */
+            padding: 10px 20px;
+            /* Padding inside the button */
+            text-align: center;
+            /* Center the text */
+            text-decoration: none;
+            /* Remove underline from the text */
+            display: inline-block;
+            /* Set as inline block for proper sizing */
+            font-size: 16px;
+            /* Font size */
+            margin: 10px 0;
+            /* Some margin around the button */
+            cursor: pointer;
+            /* Change cursor to pointer when hovering */
+            border-radius: 5px;
+            /* Rounded corners */
+            transition-duration: 0.4s;
+            /* Smooth transition on hover */
+        }
+
+        /* Button hover effect */
+        #updateButton:hover {
+            background-color: #45a049;
+            /* Darker green when hovered */
+        }
+    </style>
+
+
+</head>
+
+<body>
+
+
+
+    <h1>Creating a Bar chart with D3 - Update data</h1>
+    <button id="updateButton">Update Data</button><br>
+    <script>
+        // example from Murray
+        var dataset = [20, 5, 26, 23, 9, 23, 16, 4, 29];
+        var w = 500;
+        var h = 150;
+        var padding = 1;
+        var maxValue = 25;
+
+
+
+        var xScale = d3.scaleBand()
+            .domain(d3.range(dataset.length))
+            .rangeRound([0, w])
+            .paddingInner(0.05);
+
+        var yScale = d3.scaleLinear()
+            .domain([0, d3.max(dataset, function (d) {
+                return d;
+            })])   // The data input range
+            .range([0, 60]);    // The range available for visualization on screen
+
+        var svg1 = d3.select("body")
+            .append("svg")
+            .attr("width", w)
+            .attr("height", h);
+
+
+        svg1.selectAll("rect")
+            .data(dataset)
+            .enter()
+            .append("rect")
+            .attr("x", function (d, i) {
+                return xScale(i);
+            })
+            .attr("y", function (d) {
+                return h - yScale(d);
+            })
+            .attr("width", xScale.bandwidth())
+            .attr("height", function (d) {
+                return yScale(d);
+            })
+            .attr("fill", "teal")
+
+
+        svg1.selectAll("text")
+            .data(dataset)
+            .enter()
+            .append("text")
+            .text(function (d) {
+                return d;
+            })
+            .attr("x", function (d, i) { return xScale(i) + xScale.bandwidth() / 2; })
+            .attr("y", function (d) {
+                return h - yScale(d) + 14;
+            })
+            .attr("fill", "white")
+            .attr("font-family", "sans-serif")
+            .attr("text-anchor", "middle")
+
+        d3.select("#updateButton").on("click", function () {
+            var numValues = dataset.length;
+
+            dataset = [];
+
+            // Generate new random data between 0 and maxValue - 1 (24)
+            for (var i = 0; i < numValues; i++) {
+                var newNumber = Math.floor(Math.random() * maxValue);
+                dataset.push(newNumber);
+            }
+
+
+            // Update the Y scale based on new data
+            yScale.domain([0, d3.max(dataset)]);
+
+            // Update the bars with new data
+            svg1.selectAll("rect")
+                .data(dataset)
+                .transition()  // Add a transition for a smooth update
+                .duration(1000)  // Duration of transition (1 second)
+                .attr("y", function (d) {
+                    return h - yScale(d);
+                })
+                .attr("height", function (d) {
+                    return yScale(d);
+                });
+
+            // Update the text labels with new data
+            svg1.selectAll("text")
+                .data(dataset)
+                .transition()
+                .duration(1000)
+                .text(function (d) {
+                    return d;
+                })
+                .attr("y", function (d) {
+                    return h - yScale(d) + 14;
+                });
+        });
+
+
+    </script>
+
+
+    <br><br>
+    <footer style="color:grey">COS30045 Data Visualisation<br>Joe Bloggs</footer>
+
+</body>
+
+
+
+</html>

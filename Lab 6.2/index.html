@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="description" content="Data Visualisation Exercise 1" />
+    <meta name="keywords" content="HTML, CSS" />
+    <meta name="author" content="Your name here" />
+
+    <title>Task 6.2 D3 Interactivity - Sort</title>
+    <!--Insert description of exercise  -->
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+
+    <style>
+        button {
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 10px 5px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition-duration: 0.4s;
+        }
+
+        #add {
+            background-color: #4CAF50;
+        }
+
+        #add:hover {
+            background-color: #45a049;
+        }
+
+        #remove {
+            background-color: #2196F3;
+
+        }
+
+        #remove:hover {
+            background-color: #0b7dda;
+        }
+
+        #sort {
+            background-color: #FF9800;
+        }
+
+        #sort:hover {
+            background-color: #e68900;
+        }
+
+        svg {
+            margin-top: 20px;
+        }
+    </style>
+
+
+</head>
+
+<body>
+    <h1>Bar Chart with Mouse Over and Sort</h1>
+    <button id="add">Add</button>
+    <button id="remove">Remove</button>
+    <button id="sort">Sort</button>
+    <br>
+
+    <script>
+        // example from Murray
+        var dataset = [20, 5, 26, 23, 9, 23, 16, 4, 29];
+        var w = 500;
+        var h = 150;
+        var padding = 1;
+        var maxValue = 25;
+        var sortAscending = true;
+
+        var xScale = d3.scaleBand()
+            .domain(d3.range(dataset.length))
+            .rangeRound([0, w])
+            .paddingInner(0.05);
+
+        var yScale = d3.scaleLinear()
+            .domain([0, d3.max(dataset, function (d) {
+                return d;
+            })])   // The data input range
+            .range([0, 150]);    // The range available for visualization on screen
+
+        var svg1 = d3.select("body")
+            .append("svg")
+            .attr("width", w)
+            .attr("height", h);
+
+        //initial bars
+        svg1.selectAll("rect")
+            .data(dataset)
+            .enter()
+            .append("rect")
+            .attr("x", function (d, i) {
+                return xScale(i);
+            })
+            .attr("y", function (d) {
+                return h - yScale(d);
+            })
+            .attr("width", xScale.bandwidth())
+            .attr("height", function (d) {
+                return yScale(d);
+            })
+            .attr("fill", "teal")
+            .on("mouseover", function (event, d) {
+
+                // Get the position of the bar
+                var xPosition = parseFloat(d3.select(this).attr("x")) + xScale.bandwidth() / 2;
+                var yPosition = parseFloat(d3.select(this).attr("y")) + 15; // Move tooltip above the bar
+
+                // Add new tooltip
+                svg1.append("text")
+                    .attr("id", "tooltip")
+                    .attr("x", xPosition)
+                    .attr("y", yPosition)
+                    .attr("text-anchor", "middle")
+                    .attr("font-family", "sans-serif")
+                    .attr("font-size", "13px")
+                    .attr("fill", "black")
+                    .text(d);
+
+                //change bar to orange
+                d3.select(this)
+                    .transition().duration(200)
+                    .attr("fill", "orange");
+
+
+            })
+            .on("mouseout", function () {
+                // Remove the tooltip when the mouse moves out
+                d3.select("#tooltip").remove();
+
+                //back to teal 
+                d3.select(this)
+                    .transition().duration(200)
+                    .attr("fill", "teal");
+            });
+
+
+        //update chart after add or remove button clicked
+        function updateChart() {
+            xScale.domain(d3.range(dataset.length))
+
+            // Update the Y scale based on new data
+            yScale.domain([0, d3.max(dataset)]);
+
+            //update bars
+            var bars = svg1.selectAll("rect")
+                .data(dataset);
+
+            //add bars
+            bars.enter()
+                .append("rect")
+                .attr("x", w)
+                .attr("y", function (d) {
+                    return h - yScale(d);
+                })
+                .attr("fill", "teal")
+                .merge(bars)
+                .transition()
+                .duration(200)
+                .attr("x", function (d, i) {
+                    return xScale(i);
+                })
+                .attr("y", function (d) {
+                    return h - yScale(d);
+                })
+                .attr("width", xScale.bandwidth())
+                .attr("height", function (d) {
+                    return yScale(d);
+                });
+
+            // Add mouseover and mouseout effect to both old and new bars
+            svg1.selectAll("rect")
+                .on("mouseover", function (event, d) {
+                    // Get the position of the bar
+                    var xPosition = parseFloat(d3.select(this).attr("x")) + xScale.bandwidth() / 2;
+                    var yPosition = parseFloat(d3.select(this).attr("y")) + 15; // Move tooltip above the bar
+
+                    // Add new tooltip
+                    svg1.append("text")
+                        .attr("id", "tooltip")
+                        .attr("x", xPosition)
+                        .attr("y", yPosition)
+                        .attr("text-anchor", "middle")
+                        .attr("font-family", "sans-serif")
+                        .attr("font-size", "13px")
+                        .attr("fill", "black")
+                        .text(d);
+
+                    d3.select(this)
+                        .transition().duration(200)
+                        .attr("fill", "orange");
+                })
+                .on("mouseout", function () {
+                    // Remove the tooltip when the mouse moves out
+                    d3.select("#tooltip").remove();
+
+                    //back to teal
+                    d3.select(this)
+                        .transition().duration(200)
+                        .attr("fill", "teal");
+                });
+
+
+            // Exit bars
+            bars.exit()
+                .transition()
+                .duration(200)
+                .attr("x", w)
+                .remove();
+        }
+
+        //Function to sort bars
+        function sortBars() {
+                // Sort the dataset in ascending or descending order
+                dataset.sort(function (a, b) {
+                    return sortAscending ? d3.ascending(a, b) : d3.descending(a, b);
+                });
+
+                // Update the X domain after sorting
+                xScale.domain(d3.range(dataset.length));
+
+                // Apply transition to move the bars
+                svg1.selectAll("rect")
+                    .sort(function (a, b) {
+                        return sortAscending ? d3.ascending(a, b) : d3.descending(a, b);
+                    })
+                    .transition()
+                    .duration(1000)
+                    .attr("x", function (d, i) {
+                        return xScale(i);
+                    });
+
+                // Toggle sorting direction for next click
+                sortAscending = !sortAscending;
+        }
+
+        // Add new data button
+        d3.select("#add").on("click", function () {
+
+            var newNumber = Math.floor(Math.random() * maxValue);
+            dataset.push(newNumber);
+            updateChart();
+        });
+
+        // Remove data button
+        d3.select("#remove").on("click", function () {
+            dataset.shift();
+            updateChart();
+        });
+
+        // Sort button
+        d3.select("#sort").on("click", function () {
+            sortBars(); 
+        });
+
+    </script>
+
+
+    <br><br>
+    <footer style="color:grey">COS30045 Data Visualisation<br>Joe Bloggs</footer>
+
+</body>
+
+</html>
