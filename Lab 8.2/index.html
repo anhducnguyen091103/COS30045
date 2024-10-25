@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lab 8.2 D3 Choropleths</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+        path {
+            stroke: #fff;
+            stroke-width: 0.5px;
+        }
+        circle {
+            fill: red;
+            stroke: black;
+            stroke-width: 1px;
+        }
+        text {
+            font-size: 10px;
+            text-anchor: middle;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>Victorian Number Unemployed by LGA</h1>
+
+    <script>
+        var w = 500;
+            var h = 300;
+
+            var projection = d3.geoMercator()
+                .center([145, -36.5])
+                .translate([w / 2, h / 2])
+                .scale(2450);
+
+            var path = d3.geoPath().projection(projection);
+
+            var svg = d3.select("body")
+                .append("svg")
+                .attr("width", w)
+                .attr("height", h);
+
+            // Create a group for the map
+            var mapGroup = svg.append("g").attr("class", "map");
+
+            // Create a group for the cities (circles and text)
+            var cityGroup = svg.append("g").attr("class", "cities");
+
+            // Load CSV with unemployment data
+            d3.csv("VIC_LGA_unemployment.csv").then(function (unemploymentData) {
+
+                // Create a dictionary to hold unemployment data for each LGA
+                var unemploymentByLGA = {};
+                unemploymentData.forEach(function (d) {
+                    unemploymentByLGA[d.LGA] = +d.unemployed;  // Match column names from your CSV
+                });
+
+                // Load GeoJSON data
+                d3.json("LGA_VIC.json").then(function (json) {
+                    // Loop through each GeoJSON feature and attach unemployment data
+                    json.features.forEach(function (feature) {
+                        var lgaName = feature.properties.LGA_name;  // Ensure proper case matching
+                        feature.properties.unemployment = unemploymentByLGA[lgaName] || 0;  // Assign unemployment data or 0 if missing
+                    });
+
+                    // Set up color scale for unemployment data
+                    var color = d3.scaleQuantize()
+                        .domain([d3.min(unemploymentData, function (d) { return +d.unemployed; }),
+                        d3.max(unemploymentData, function (d) { return +d.unemployed; })])
+                        .range(d3.schemeBlues[9]);  // 9 shades of blue
+
+                    // Bind data and create paths for each LGA within the map group
+                    mapGroup.selectAll("path")
+                        .data(json.features)
+                        .enter()
+                        .append("path")
+                        .attr("d", path)
+                        .attr("fill", function (d) {
+                            // Use unemployment data to fill color
+                            var unemployment = d.properties.unemployment;
+                            return unemployment ? color(unemployment) : "#ccc";  // Default to grey if no data
+                        })
+                        .attr("stroke", "#fff")
+                        .attr("stroke-width", 0.5);
+                });
+            });
+
+            // Step 5: Load CSV with city data and add circles and labels within the city group
+            d3.csv("VIC_city.csv").then(function (cityData) {
+                // Add circles for each city in the city group
+                cityGroup.selectAll("circle")
+                    .data(cityData)
+                    .enter()
+                    .append("circle")
+                    .attr("cx", function (d) {
+                        return projection([+d.lon, +d.lat])[0];  // Convert longitude to x-coordinate
+                    })
+                    .attr("cy", function (d) {
+                        return projection([+d.lon, +d.lat])[1];  // Convert latitude to y-coordinate
+                    })
+                    .attr("r", 4)  // Radius of the circles
+                    .attr("fill", "red");
+
+                // Add labels for each city in the city group
+                cityGroup.selectAll("text")
+                    .data(cityData)
+                    .enter()
+                    .append("text")
+                    .attr("x", function (d) {
+                        return projection([+d.lon, +d.lat])[0];  // Convert longitude to x-coordinate
+                    })
+                    .attr("y", function (d) {
+                        return projection([+d.lon, +d.lat])[1] - 10;  // Convert latitude to y-coordinate and position above the circle
+                    })
+                    .text(function (d) {
+                        return d.place;
+                    });
+            });
+
+
+    </script>
+
+</body>
+
+</html>

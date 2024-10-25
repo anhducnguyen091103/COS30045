@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lab 7.3 Stacked Bar Chart</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+        svg {
+            font-family: sans-serif;
+            font-size: 10px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>Stacked Bar Chart</h1>
+    <div id="chart"></div>
+
+    <script>
+        //Set up the data
+        var dataset = [
+            { apples: 5, oranges: 10, grapes: 22 },
+            { apples: 4, oranges: 12, grapes: 28 },
+            { apples: 2, oranges: 19, grapes: 32 },
+            { apples: 7, oranges: 23, grapes: 35 },
+            { apples: 23, oranges: 17, grapes: 43 }
+        ];
+
+        var w = 300;
+        var h = 300;
+        var padding = 40;
+
+        var keys = ["grapes", "oranges", "apples"]; // The categories to stack
+
+        //Set up the stack
+        var stack = d3.stack()
+            .keys(keys);
+
+        var series = stack(dataset);  // Create stack data structure
+
+        // Set up the SVG canvas
+        var svg = d3.select("#chart")
+            .append("svg")
+            .attr("width", w)
+            .attr("height", h);
+
+        // Scales for x and y axes
+        var xScale = d3.scaleBand()
+            .domain(d3.range(dataset.length))
+            .range([padding, w - padding])
+            .padding(0.1);
+
+        var yScale = d3.scaleLinear()
+            .domain([0, d3.max(dataset, function (d) {
+                return d.apples + d.oranges + d.grapes;
+            })])
+            .range([h - padding, padding]);
+
+        var color = d3.scaleOrdinal(d3.schemeCategory10);  // Color scale for categories
+
+        
+        svg.selectAll("g")
+            .data(series)
+            .enter()
+            .append("g")
+            .attr("fill", function (d, i) { return color(i); })  // Apply color by index
+            .selectAll("rect")
+            .data(function (d) { return d; })
+            .enter()
+            .append("rect")
+            .attr("x", function (d, i) { return xScale(i); })
+            .attr("y", function (d) { return yScale(d[1]); })
+            .attr("height", function (d) { return yScale(d[0]) - yScale(d[1]); })
+            .attr("width", xScale.bandwidth());
+
+        // Adding x and y axes
+        var xAxis = d3.axisBottom(xScale).tickFormat(function (d, i) { return "Group " + (i + 1); });
+        var yAxis = d3.axisLeft(yScale).ticks(5);
+
+        svg.append("g")
+            .attr("transform", "translate(0," + (h - padding) + ")")
+            .call(xAxis);
+
+        svg.append("g")
+            .attr("transform", "translate(" + padding + ",0)")
+            .call(yAxis);
+
+    </script>
+
+</body>
+
+</html>

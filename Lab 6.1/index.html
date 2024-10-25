@@ -8,7 +8,6 @@
     <meta name="author" content="Your name here" />
 
     <title>Task 6.1 D3 Interactivity - Mouse Over Effects</title>
-    <!--Insert description of exercise  -->
     <script src="https://d3js.org/d3.v7.min.js"></script>
 
     <style>
@@ -103,7 +102,7 @@
                 var xPosition = parseFloat(d3.select(this).attr("x")) + xScale.bandwidth() / 2;
                 var yPosition = parseFloat(d3.select(this).attr("y")) + 15; // Move tooltip above the bar
 
-                // Add new tooltip
+                // Add new tooltip to the póition
                 svg1.append("text")
                     .attr("id", "tooltip")
                     .attr("x", xPosition)

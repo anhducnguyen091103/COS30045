@@ -133,8 +133,6 @@
             // Update the bars with new data
             svg1.selectAll("rect")
                 .data(dataset)
-                .transition()  // Add a transition for a smooth update
-                .duration(1000)  // Duration of transition (1 second)
                 .attr("y", function (d) {
                     return h - yScale(d);
                 })
@@ -145,8 +143,6 @@
             // Update the text labels with new data
             svg1.selectAll("text")
                 .data(dataset)
-                .transition()
-                .duration(1000)
                 .text(function (d) {
                     return d;
                 })

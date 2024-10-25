@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lab 7.2 Pie Chart with D3.js</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+        .arc text {
+            font-size: 18px;
+            fill: black;
+            text-anchor: middle;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>Pie Chart</h1>
+    <div id="chart"></div>
+
+    <script>
+        // Step 1: Set up the data and SVG canvas
+        var dataset = [45, 25, 20, 10, 6, 5];  // Dataset
+        var w = 300;
+        var h = 300;
+        var radius = w / 2;
+
+        var svg = d3.select("#chart")
+            .append("svg")
+            .attr("width", w)
+            .attr("height", h)
+            .append("g")
+            .attr("transform", "translate(" + radius + "," + radius + ")");  // Move to the center
+
+        // Step 2: Set up pie and arc functions
+        var pie = d3.pie();
+
+        var arc = d3.arc()
+            .innerRadius(0)  // If you set this greater than 0, it will create a donut chart
+            .outerRadius(radius);
+
+        // Step 3: Set up the arcs
+        var color = d3.scaleOrdinal(d3.schemeCategory10);  // Color scale
+
+        // Step 4: Draw the arcs
+        var arcs = svg.selectAll("g.arc")
+            .data(pie(dataset))  // Binding data from the pie function
+            .enter()
+            .append("g")
+            .attr("class", "arc");
+
+        arcs.append("path")
+            .attr("d", arc)  // Generating the path for the arc
+            .attr("fill", function (d, i) { return color(i); });  // Filling each arc with a color
+
+        // Step 5: Add text labels
+        arcs.append("text")
+            .attr("transform", function (d) {
+                return "translate(" + arc.centroid(d) + ")";  // Move the text to the center of the arc
+            })
+            .text(function (d) { return d.value; })  // Add the value as text
+            .attr("fill", "black");
+
+    </script>
+
+</body>
+
+</html>

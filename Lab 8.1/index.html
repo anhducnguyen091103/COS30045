@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lab 8.1 D3 Geo Paths and Projections</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+        svg {
+            font-family: sans-serif;
+            font-size: 10px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>Victorian LGA map</h1>
+
+    <script>
+        var w = 500;
+        var h = 300;
+
+        var projection = d3.geoMercator()
+                .center([145, -36.5])
+                .translate([w / 2, h / 2])
+                .scale(2450);
+
+
+        var path = d3.geoPath()
+            .projection(projection);
+
+        var svg = d3.select("body")
+                .append("svg")
+                .attr("width", w)
+                .attr("height", h)
+                .attr("fill", "grey");
+
+            d3.json("LGA_VIC.json").then(function (json) {
+                svg.selectAll("path")
+                    .data(json.features)
+                    .enter()
+                    .append("path")
+                    .attr("d", path);
+            });
+        
+    </script>
+
+</body>
+
+</html>
